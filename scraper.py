@@ -84,7 +84,7 @@ def convert_mth_strings ( mth_string ):
 #### VARIABLES 1.0
 
 entity_id = "NFTRL4_RWHNFT_gov"
-url = "http://www.royalwolverhampton.nhs.uk/about-us/how-we-spend-our-money/how-we-spend-our-money-april-2010-march-2016/"
+url = "https://data.gov.uk/dataset/financial-transactions-data-royal-wolverhampton-hospitals-nhs-trust"
 errors = 0
 data = []
 
@@ -96,12 +96,12 @@ soup = BeautifulSoup(html, 'lxml')
 
 #### SCRAPE DATA
 
-blocks = soup.find_all('a', 'download-sheet ')
+blocks = soup.find_all('div', 'dataset-resource')
 for page in blocks:
-        title = page.text.strip()
-        url = 'http://www.royalwolverhampton.nhs.uk'+page['href']
-        csvMth = title[:3]
-        csvYr = title[-4:]
+        title = page.find('span', 'inner-cell').text.strip().split('\n')[-1].strip()
+        csvMth = title.split()[1][:3]
+        csvYr = title[:4]
+        url = page.find('div', 'inner-cell').find('span').find_next('span').find('a')['href']
         csvMth = convert_mth_strings(csvMth.upper())
         data.append([csvYr, csvMth, url])
 
